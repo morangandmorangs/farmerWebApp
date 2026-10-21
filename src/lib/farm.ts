@@ -31,4 +31,7 @@ export const addCrop = (input: { crop: string; variety?: string; area?: number; 
   api<CropRecord>("/farmers/me/crops", { method: "POST", json: input });
 export const markHarvested = (id: string, harvested: boolean) =>
   api<CropRecord>(`/farmers/me/crops/${id}`, { method: "PATCH", json: { harvested } });
-export const removeCrop = (id: string) => api<void>(`/farmers/me/crops/${id}`, { method: "DELETE" });
+/** Removing a crop needs the farmer's password, or an ID token from a fresh phone-OTP or Google sign-in. */
+export type RemoveProof = { password: string } | { idToken: string };
+export const removeCrop = (id: string, proof: RemoveProof) =>
+  api<void>(`/farmers/me/crops/${id}`, { method: "DELETE", json: proof });

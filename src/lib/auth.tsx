@@ -9,9 +9,10 @@ export type Farmer = {
   name: string;
   email?: string;
   phoneNumber?: string;
+  /** How the account was created: "password" (email), "phone" or "google". */
+  provider: string;
   profileStatus: ProfileStatus;
   reviewNote?: string;
-  documents: { kind: string; url: string; submittedAt: string }[];
 };
 
 type Session = Farmer & { token: string };
@@ -44,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, [refresh]);
 
-  // The sign-in responses are small; the full profile (documents, note) comes from /me.
+  // The sign-in responses are small; the full profile (status, note) comes from /me.
   const start = useCallback(
     async (session: Session) => {
       setToken(session.token);

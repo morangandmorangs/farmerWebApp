@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
+import RemoveCropDialog from "@/components/RemoveCropDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { addCrop, cropCatalog, getFarm, markHarvested, removeCrop, type CropOption, type CropRecord } from "@/lib/farm";
+import { addCrop, cropCatalog, getFarm, markHarvested, type CropOption, type CropRecord } from "@/lib/farm";
+import { formatDate } from "@/lib/format";
+import { useAction } from "@/lib/use-action";
 
 const DAY = 86_400_000;
 const today = () => new Date().toISOString().slice(0, 10);
@@ -25,24 +28,23 @@ export default function Crops() {
   const [crops, setCrops] = useState<CropRecord[]>([]);
   const [options, setOptions] = useState<CropOption[]>([]);
   const [form, setForm] = useState({ crop: "", variety: "", area: "", plantedOn: today() });
-  const [busy, setBusy] = useState(false);
+  const adding = useAction();
+  const updating = useAction();
+  const [removing, setRemoving] = useState<{ id: string; name: string } | null>(null);
 
-  const load = useCallback(() => {
-    getFarm().then((f) => setCrops(f.crops)).catch((e: Error) => toast.error(e.message));
-  }, []);
+  const load = useCallback(() => getFarm().then((f) => setCrops(f.crops)), []);
 
   useEffect(() => {
-    load();
+    load().catch((e: Error) => toast.error(e.message));
     cropCatalog().then(setOptions).catch((e: Error) => toast.error(e.message));
   }, [load]);
 
   const label = (slug: string) => options.find((o) => o.slug === slug)?.label ?? slug;
   const chosen = options.find((o) => o.slug === form.crop);
 
-  async function submit(e: FormEvent) {
+  function submit(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
-    try {
+    void adding.run(async () => {
       await addCrop({
         crop: form.crop,
         variety: form.variety || undefined,
@@ -50,15 +52,17 @@ export default function Crops() {
         plantedOn: form.plantedOn,
       });
       setForm({ crop: "", variety: "", area: "", plantedOn: today() });
-      load();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not add crop");
-    } finally {
-      setBusy(false);
-    }
+      await load();
+    }, "Could not add crop");
   }
 
-  const act = (job: () => Promise<unknown>) => job().then(load).catch((e: Error) => toast.error(e.message));
+  // One row action at a time, held until the list has reloaded, so a second
+  // tap can't toggle a crop twice.
+  const act = (job: () => Promise<unknown>) =>
+    void updating.run(async () => {
+      await job();
+      await load();
+    });
 
   return (
     <div className="grid gap-6">
@@ -93,7 +97,7 @@ export default function Crops() {
               <Input id="area" type="number" min={0} step="any" value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })} />
             </div>
             <div className="sm:col-span-2">
-              <Button type="submit" disabled={busy}>{busy ? "Adding…" : "Add crop"}</Button>
+              <Button type="submit" disabled={adding.busy}>{adding.busy ? "Adding…" : "Add crop"}</Button>
             </div>
           </form>
         </CardContent>
@@ -113,19 +117,34 @@ export default function Crops() {
                     {c.variety ? ` · ${c.variety}` : ""}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Planted {new Date(c.plantedOn).toLocaleDateString()} · ready about {new Date(c.expectedHarvestOn).toLocaleDateString()}
+                    Planted {formatDate(c.plantedOn)} · ready about {formatDate(c.expectedHarvestOn)}
                   </div>
                 </div>
                 <Badge variant={r.variant}>{r.label}</Badge>
-                <Button size="sm" variant="outline" onClick={() => act(() => markHarvested(c.id, !c.harvestedOn))}>
+                <Button size="sm" variant="outline" disabled={updating.busy} onClick={() => act(() => markHarvested(c.id, !c.harvestedOn))}>
                   {c.harvestedOn ? "Undo harvested" : "Mark harvested"}
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => act(() => removeCrop(c.id))}>Remove</Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={updating.busy}
+                  onClick={() => setRemoving({ id: c.id, name: `${label(c.crop)}${c.variety ? ` · ${c.variety}` : ""}` })}>
+                  Remove
+                </Button>
               </CardContent>
             </Card>
           );
         })}
       </div>
+      <RemoveCropDialog
+        key={removing?.id ?? "none"}
+        crop={removing}
+        onCancel={() => setRemoving(null)}
+        onRemoved={async () => {
+          setRemoving(null);
+          await load();
+        }}
+      />
     </div>
   );
 }
