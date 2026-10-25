@@ -1,53 +1,67 @@
-import { FileText, LogOut, Sprout, Tractor } from "lucide-react";
-import { NavLink, Navigate, Outlet } from "react-router-dom";
+import { LogOut, Sprout, Tractor } from "lucide-react";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ThemeToggle from "@/components/ThemeToggle";
+import WelcomeFooter from "@/components/WelcomeFooter";
 import { useAuth } from "@/lib/auth";
-import { cn } from "@/lib/utils";
 
-const NAV = [
-  { to: "/", label: "Farm", icon: Tractor, end: true },
-  { to: "/crops", label: "Crops", icon: Sprout, end: false },
-  { to: "/documents", label: "Documents", icon: FileText, end: false },
+const TABS = [
+  { to: "/", label: "Farm", icon: Tractor },
+  { to: "/crops", label: "Crops", icon: Sprout },
 ];
 
 export default function Layout() {
   const { farmer, loading, signOut } = useAuth();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  // The tab follows the address, so a reload or a link lands on the right one.
+  const current = TABS.find((t) => t.to !== "/" && pathname.startsWith(t.to))?.to ?? "/";
 
   if (loading) return <div className="p-8 text-muted-foreground">Loading…</div>;
   if (!farmer) return <Navigate to="/login" replace />;
 
   return (
-    <div className="mx-auto min-h-svh max-w-4xl p-4">
-      <header className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="mr-auto">
-          <div className="text-lg font-semibold">Local Mart Farmer</div>
-          <div className="text-sm text-muted-foreground">{farmer.name}</div>
+    <div className="flex min-h-svh flex-col">
+      {/* Dark green in the light theme. In the dark theme it takes the page colour, with a line under it. */}
+      <header className="bg-green-900 dark:border-b dark:bg-background">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-3 p-4">
+          <div className="mr-auto">
+            <div className="text-lg font-semibold text-white dark:text-foreground">Local Mart Farmer</div>
+            <div className="text-sm text-green-100 dark:text-muted-foreground">{farmer.name}</div>
+          </div>
+          <ThemeToggle />
+          <Button variant="outline" size="sm" onClick={signOut}>
+            <LogOut /> Sign out
+          </Button>
         </div>
-        <Badge variant={farmer.profileStatus === "approved" ? "default" : "secondary"}>{farmer.profileStatus}</Badge>
-        <Button variant="outline" size="sm" onClick={signOut}>
-          <LogOut /> Sign out
-        </Button>
       </header>
-      <nav className="mb-6 flex gap-2">
-        {NAV.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              cn("flex items-center gap-2 rounded-md px-3 py-2 text-sm", isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted")
-            }>
-            <Icon className="size-4" />
-            {label}
-          </NavLink>
-        ))}
-      </nav>
-      {farmer.reviewNote && farmer.profileStatus !== "approved" && (
-        <div className="mb-4 rounded-md border bg-muted/40 p-3 text-sm">Reviewer note: {farmer.reviewNote}</div>
-      )}
-      <Outlet />
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pt-6 pb-4">
+        <Tabs
+          value={current}
+          onValueChange={(value) => {
+            const tab = TABS.find((t) => t.to === value);
+            if (tab) navigate(tab.to);
+          }}
+          className="mb-6">
+          <TabsList aria-label="Sections">
+            {TABS.map(({ to, label, icon: Icon }) => (
+              <TabsTrigger key={to} value={to} className="px-3">
+                <Icon />
+                {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        {farmer.reviewNote && farmer.profileStatus !== "approved" && (
+          <div className="mb-4 rounded-md border bg-muted/40 p-3 text-sm">Reviewer note: {farmer.reviewNote}</div>
+        )}
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <WelcomeFooter />
+      </div>
     </div>
   );
 }

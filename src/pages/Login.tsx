@@ -7,8 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PasswordInput from "@/components/PasswordInput";
+import ThemeToggle from "@/components/ThemeToggle";
+import WelcomeFooter from "@/components/WelcomeFooter";
 import { useAuth } from "@/lib/auth";
 import { confirmOtp, googleIdToken, sendOtp } from "@/lib/firebase";
+import { useAction } from "@/lib/use-action";
 
 type Mode = "email" | "phone" | "register";
 const PHONE = /^[6-9]\d{9}$/;
@@ -16,7 +20,7 @@ const PHONE = /^[6-9]\d{9}$/;
 export default function Login() {
   const auth = useAuth();
   const [mode, setMode] = useState<Mode>("email");
-  const [busy, setBusy] = useState(false);
+  const { busy, run } = useAction();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,17 +29,6 @@ export default function Login() {
   const [otp, setOtp] = useState<ConfirmationResult | null>(null);
 
   if (auth.farmer) return <Navigate to="/" replace />;
-
-  async function run(job: () => Promise<void>) {
-    setBusy(true);
-    try {
-      await job();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setBusy(false);
-    }
-  }
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -62,61 +55,67 @@ export default function Login() {
   );
 
   return (
-    <div className="flex min-h-svh items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Local Mart Farmer</CardTitle>
-          <CardDescription>Sign in to manage your farm and crops.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="flex gap-2">
-            {tab("email", "Email")}
-            {tab("phone", "Phone OTP")}
-            {tab("register", "Sign up")}
-          </div>
+    <div className="relative flex min-h-svh flex-col items-center bg-muted/40 p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <div className="flex w-full flex-1 items-center justify-center">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Local Mart Farmer</CardTitle>
+            <CardDescription>Sign in to manage your farm and crops.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="flex gap-2">
+              {tab("email", "Email")}
+              {tab("phone", "Phone OTP")}
+              {tab("register", "Sign up")}
+            </div>
 
-          <form onSubmit={submit} className="grid gap-3">
-            {(mode === "register" || (mode === "phone" && !otp)) && (
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" required={mode === "register"} value={name} onChange={(e) => setName(e.target.value)} />
-              </div>
-            )}
-            {mode !== "phone" && (
-              <>
+            <form onSubmit={submit} className="grid gap-3">
+              {(mode === "register" || (mode === "phone" && !otp)) && (
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" required={mode === "register"} value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
+              )}
+              {mode !== "phone" && (
+                <>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <PasswordInput id="password" required minLength={6} autoComplete={mode === "register" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+                  </div>
+                </>
+              )}
+              {(mode === "phone" || mode === "register") && (
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" required minLength={6} autoComplete={mode === "register" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <Label htmlFor="phone">Mobile number</Label>
+                  <Input id="phone" inputMode="numeric" maxLength={10} required disabled={otp !== null} value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} />
                 </div>
-              </>
-            )}
-            {(mode === "phone" || mode === "register") && (
-              <div className="grid gap-2">
-                <Label htmlFor="phone">Mobile number</Label>
-                <Input id="phone" inputMode="numeric" maxLength={10} required disabled={otp !== null} value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} />
-              </div>
-            )}
-            {mode === "phone" && otp && (
-              <div className="grid gap-2">
-                <Label htmlFor="code">SMS code</Label>
-                <Input id="code" inputMode="numeric" maxLength={6} required value={code} onChange={(e) => setCode(e.target.value)} />
-              </div>
-            )}
-            <Button type="submit" disabled={busy}>
-              {busy ? "Please wait…" : mode === "email" ? "Sign in" : mode === "register" ? "Create account" : otp ? "Verify and sign in" : "Send code"}
+              )}
+              {mode === "phone" && otp && (
+                <div className="grid gap-2">
+                  <Label htmlFor="code">SMS code</Label>
+                  <Input id="code" inputMode="numeric" maxLength={6} required value={code} onChange={(e) => setCode(e.target.value)} />
+                </div>
+              )}
+              <Button type="submit" disabled={busy}>
+                {busy ? "Please wait…" : mode === "email" ? "Sign in" : mode === "register" ? "Create account" : otp ? "Verify and sign in" : "Send code"}
+              </Button>
+            </form>
+            <div id="recaptcha" />
+
+            <Button type="button" variant="outline" disabled={busy} onClick={() => run(async () => auth.signInWithGoogle(await googleIdToken()))}>
+              Continue with Google
             </Button>
-          </form>
-          <div id="recaptcha" />
-
-          <Button type="button" variant="outline" disabled={busy} onClick={() => run(async () => auth.signInWithGoogle(await googleIdToken()))}>
-            Continue with Google
-          </Button>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+      <WelcomeFooter />
     </div>
   );
 }

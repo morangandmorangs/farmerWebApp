@@ -13,9 +13,10 @@ export default defineConfig({
     // Pinned: localMart-BE's CORS allowlist names this origin exactly.
     port: 5175,
     strictPort: true,
+    // Through the Nginx gateway (`npm run gateway`), which sends these /api paths to localMart-BE.
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8000",
         changeOrigin: true,
         secure: false,
       },
