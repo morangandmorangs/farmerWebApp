@@ -10,10 +10,10 @@ export default defineConfig({
     alias: { "@": path.resolve(import.meta.dirname, "./src") },
   },
   server: {
-    // Pinned: localMart-BE's CORS allowlist names this origin exactly.
+    // Pinned: localMart-BEE's CORS allowlist names this origin exactly.
     port: 5175,
     strictPort: true,
-    // Through the Nginx gateway (`npm run gateway`), which sends these /api paths to localMart-BE.
+    // Through the Nginx gateway (`npm run gateway`), which sends these /api paths to localMart-BEE.
     proxy: {
       "/api": {
         target: "http://localhost:8000",
