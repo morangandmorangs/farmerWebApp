@@ -21,6 +21,7 @@
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
     --color-chart-1: var(--chart-1);
+    --color-highlight: var(--highlight);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -48,73 +49,120 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Field greens with a lime accent, from the Farmer Program designs. Lime is
+ * only ever a fill (buttons, the chosen tab) with dark text on it; text and
+ * icons that need the accent use --highlight, which stays readable on the page.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+    --background: oklch(0.975 0.008 140);
+    --foreground: oklch(0.25 0.04 155);
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.25 0.04 155);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.25 0.04 155);
+    --primary: oklch(0.89 0.19 127);
+    --primary-foreground: oklch(0.27 0.06 150);
+    --secondary: oklch(0.95 0.02 140);
+    --secondary-foreground: oklch(0.3 0.05 155);
+    --muted: oklch(0.96 0.012 140);
+    --muted-foreground: oklch(0.48 0.03 150);
+    --accent: oklch(0.95 0.04 130);
+    --accent-foreground: oklch(0.3 0.07 148);
     --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.84 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --border: oklch(0.9 0.018 140);
+    --input: oklch(0.86 0.022 140);
+    --ring: oklch(0.72 0.17 135);
+    --highlight: oklch(0.52 0.14 142);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar: oklch(1 0 0);
+    --sidebar-foreground: oklch(0.25 0.04 155);
+    --sidebar-primary: oklch(0.52 0.14 142);
     --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar-accent: oklch(0.95 0.05 128);
+    --sidebar-accent-foreground: oklch(0.3 0.07 148);
+    --sidebar-border: oklch(0.92 0.015 140);
+    --sidebar-ring: oklch(0.72 0.17 135);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    --background: oklch(0.165 0.014 165);
+    --foreground: oklch(0.96 0.008 140);
+    --card: oklch(0.195 0.018 162);
+    --card-foreground: oklch(0.96 0.008 140);
+    --popover: oklch(0.215 0.02 162);
+    --popover-foreground: oklch(0.96 0.008 140);
+    --primary: oklch(0.9 0.19 127);
+    --primary-foreground: oklch(0.24 0.06 150);
+    --secondary: oklch(0.26 0.028 160);
+    --secondary-foreground: oklch(0.96 0.008 140);
+    --muted: oklch(0.235 0.02 162);
+    --muted-foreground: oklch(0.75 0.02 150);
+    --accent: oklch(0.3 0.06 150);
+    --accent-foreground: oklch(0.96 0.008 140);
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(0.4 0 0);
+    --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(0.86 0.18 128);
+    --highlight: oklch(0.88 0.19 127);
     --chart-1: oklch(0.87 0 0);
     --chart-2: oklch(0.556 0 0);
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --sidebar: oklch(0.18 0.016 164);
+    --sidebar-foreground: oklch(0.96 0.008 140);
+    --sidebar-primary: oklch(0.88 0.19 127);
+    --sidebar-primary-foreground: oklch(0.24 0.06 150);
+    --sidebar-accent: oklch(0.3 0.06 150);
+    --sidebar-accent-foreground: oklch(0.98 0.005 140);
+    --sidebar-border: oklch(1 0 0 / 8%);
+    --sidebar-ring: oklch(0.86 0.18 128);
+}
+
+/*
+ * The sign-in screen's palette (src/pages/Login.tsx): field greens and a lime
+ * accent, from the Farmer Program design. It re-points the shadcn tokens
+ * inside .farmer-login, so the inputs and buttons there pick it up, and adds
+ * --highlight (accent text, readable on the page and the form) and --brand-*
+ * (the card behind the form, dark in both themes). The rest of the app keeps
+ * the neutral palette above.
+ */
+.farmer-login {
+    --background: oklch(0.965 0.02 135);
+    --foreground: oklch(0.27 0.05 155);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.27 0.05 155);
+    --primary: oklch(0.89 0.19 127);
+    --primary-foreground: oklch(0.27 0.06 150);
+    --muted: oklch(0.95 0.025 135);
+    --muted-foreground: oklch(0.47 0.04 150);
+    --border: oklch(0.89 0.03 140);
+    --input: oklch(0.86 0.035 140);
+    --ring: oklch(0.72 0.17 135);
+    --highlight: oklch(0.52 0.14 142);
+    --brand: oklch(0.25 0.045 160 / 94%);
+    --brand-border: oklch(0.8 0.15 135 / 35%);
+    --brand-accent: oklch(0.9 0.19 127);
+}
+
+.dark .farmer-login {
+    --background: oklch(0.18 0.035 160);
+    --foreground: oklch(0.97 0.01 135);
+    --card: oklch(0.17 0.03 162 / 88%);
+    --card-foreground: oklch(0.97 0.01 135);
+    --muted: oklch(1 0 0 / 7%);
+    --muted-foreground: oklch(0.8 0.025 140);
+    --border: oklch(1 0 0 / 14%);
+    --input: oklch(1 0 0 / 16%);
+    --ring: oklch(0.86 0.18 128);
+    --highlight: oklch(0.9 0.19 127);
+    --brand: oklch(0.24 0.045 160 / 80%);
 }
 
 @layer base {

@@ -1,6 +1,8 @@
 import { api } from "./api";
 
-export const LAND_UNITS = ["acre", "hectare", "bigha"] as const;
+/** Assam's units first: most farmers here measure in bigha, katha and lecha. */
+export const LAND_UNITS = ["bigha", "katha", "lecha", "acre", "hectare"] as const;
+export type LandUnit = (typeof LAND_UNITS)[number];
 
 export type Farm = {
   addressLine: string | null;
@@ -9,7 +11,7 @@ export type Farm = {
   state: string | null;
   pincode: string | null;
   landSize: number | null;
-  landUnit: (typeof LAND_UNITS)[number];
+  landUnit: LandUnit;
 };
 
 export type CropRecord = {

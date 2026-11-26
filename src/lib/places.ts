@@ -1,0 +1,77 @@
+/**
+ * Suggestions for the farm address. The fields stay free text (the backend
+ * takes any string), so a district missing here can still be typed.
+ */
+
+/** Assam's 35 districts. Karimganj was renamed Sribhumi in 2024. */
+export const ASSAM_DISTRICTS = [
+  "Bajali",
+  "Baksa",
+  "Barpeta",
+  "Biswanath",
+  "Bongaigaon",
+  "Cachar",
+  "Charaideo",
+  "Chirang",
+  "Darrang",
+  "Dhemaji",
+  "Dhubri",
+  "Dibrugarh",
+  "Dima Hasao",
+  "Goalpara",
+  "Golaghat",
+  "Hailakandi",
+  "Hojai",
+  "Jorhat",
+  "Kamrup",
+  "Kamrup Metropolitan",
+  "Karbi Anglong",
+  "Kokrajhar",
+  "Lakhimpur",
+  "Majuli",
+  "Morigaon",
+  "Nagaon",
+  "Nalbari",
+  "Sivasagar",
+  "Sonitpur",
+  "South Salmara-Mankachar",
+  "Sribhumi",
+  "Tamulpur",
+  "Tinsukia",
+  "Udalguri",
+  "West Karbi Anglong",
+];
+
+/** Most farmers in the program are in Assam, so a new farm starts with it. */
+export const DEFAULT_STATE = "Assam";
+
+export const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+];
