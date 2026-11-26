@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
+import PageHeader from "@/components/PageHeader";
 import RemoveCropDialog from "@/components/RemoveCropDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,7 @@ export default function Crops() {
 
   return (
     <div className="grid gap-6">
+      <PageHeader title="My Crops" text="Record what you plant and when. We work out when each crop should be ready to harvest." />
       <Card>
         <CardHeader>
           <CardTitle>Add a crop</CardTitle>
